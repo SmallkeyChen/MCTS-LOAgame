@@ -1,7 +1,6 @@
 import random
 import time
-import concurrent.futures
-
+from Efunction import Efunction
 
 class MCTS:
     @staticmethod
@@ -16,38 +15,39 @@ class MCTS:
 
     @staticmethod
     def rollout(node):
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            depth = 0
-            tmp_state = node.state
-            while not tmp_state.is_over():
-                actions = tmp_state.get_legal_plays()
-                action = random.choice(actions)
-                tmp_state = tmp_state.state_move(action)
-                depth += 1
-                if depth > 400:
-                    print(">400: return 0")
-                    return 0
-            result = tmp_state.get_result()
-            print("depth :", depth, " | result: ", result)
-            return result
+        tmp_state = node.state
+        depth = 0
+        while not tmp_state.is_over():
+            depth = depth + 1
+            if depth > 30:
+                efun = Efunction()
+                time_1 = time.time()
+                evalue=efun.evaluate(tmp_state)
+                time_2 = time.time()
+                print("evaluation time: ", time_2 - time_1, ", evalue: ", evalue)
+                return evalue
+            actions = tmp_state.get_legal_plays()
+            action = random.choice(actions)
+            tmp_state = tmp_state.state_move(action)
+        result = tmp_state.get_result()
+        print("depth :", depth, " | result: ", result)
+        return result
 
     @staticmethod
     def best_action(times, root):
 
-        time_start = time_3 = time.time()
+        time_start = time.time()
 
         for _ in range(times):
             node = MCTS.tree_policy(root)
             time_1 = time.time()
-            # print("tree_policy time: ", time_1 - time_3)
 
             reward = MCTS.rollout(node)
+
             time_2 = time.time()
             print("roll-out time: ", time_2 - time_1)
 
             node.backup(reward)
-            # time_3 = time.time()
-            # print("backup time: ", time_3 - time_2)
 
         time_end = time.time()
 

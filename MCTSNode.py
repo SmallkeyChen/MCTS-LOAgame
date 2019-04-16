@@ -29,11 +29,15 @@ class MCTSNode:
 
     def backup(self, result):
         self.visits += 1.0
-        if result == 1:
-            self.value += 1.0
+        self.value += result
         if self.parent:
             self.parent.backup(result)
 
     def best_child(self):
-        weights = [(i.value / i.visits + 1.414 * np.sqrt((2*np.log(self.visits))/i.visits)) for i in self.children]
+        weights = []
+        for i in self.children:
+            if self.state.now_move == -1:
+                i.value = -i.value
+            w = (i.value / i.visits + 1.414 * np.sqrt((2*np.log(self.visits))/i.visits))
+            weights.append(w)
         return self.children[np.argmax(weights)]
