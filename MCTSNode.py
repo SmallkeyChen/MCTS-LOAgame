@@ -9,6 +9,7 @@ class MCTSNode:
         self.state = state
         self.parent = parent
         self.children = []
+        self.e_value = 0
         actions = self.state.get_legal_plays()
         random.shuffle(actions)
         self.untried_actions = actions

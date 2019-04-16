@@ -7,6 +7,7 @@ import pygame
 import pygame.font
 from pygame.locals import *
 import sys
+from GlobalVar import *
 
 
 def pygame_init():
@@ -101,14 +102,13 @@ def draw_countdown(screen, count):
     return screen
 
 
-def computer_fisrt(screen, state):
-    counts = 300
+def computer_first(screen, state):
     focus = None
     focused = False
     has_chess = False
     # pygame.time.set_timer(11, 1000)
     root = MCTSNode(state)
-    state = MCTS.best_action(counts, root).state
+    state = MCTS.best_action(total_counts, root).state
     draw_chessboard(screen, state.board, 1)
     while True:
         for event in pygame.event.get():
@@ -133,7 +133,7 @@ def computer_fisrt(screen, state):
                             has_chess = True
                         if has_chess:
                             root = MCTSNode(state)
-                            state = MCTS.best_action(counts, root).state
+                            state = MCTS.best_action(total_counts, root).state
                             draw_chessboard(screen, state.board, 1)
                             has_chess = False
                         # draw_countdown(screen, count)
@@ -175,7 +175,7 @@ if __name__ == "__main__":
                 x, y = pygame.mouse.get_pos()
                 if 880 < x < 1030 and 530 < y < 610 and is_end:
                     is_end = False
-                    computer_fisrt(screen, state)
+                    computer_first(screen, state)
                     is_end = True
 
                 if 880 < x < 905 and is_end:
