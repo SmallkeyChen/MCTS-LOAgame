@@ -102,13 +102,13 @@ def draw_countdown(screen, count):
 
 
 def computer_fisrt(screen, state):
-    count = 60
+    counts = 300
     focus = None
     focused = False
     has_chess = False
     # pygame.time.set_timer(11, 1000)
     root = MCTSNode(state)
-    state = MCTS.best_action(5, root).state
+    state = MCTS.best_action(counts, root).state
     draw_chessboard(screen, state.board, 1)
     while True:
         for event in pygame.event.get():
@@ -133,7 +133,7 @@ def computer_fisrt(screen, state):
                             has_chess = True
                         if has_chess:
                             root = MCTSNode(state)
-                            state = MCTS.best_action(5, root).state
+                            state = MCTS.best_action(counts, root).state
                             draw_chessboard(screen, state.board, 1)
                             has_chess = False
                         # draw_countdown(screen, count)

@@ -112,7 +112,20 @@ class LOAState:
                 if self.is_move_legal(move):
                     legal_plays.append(move)
 
+        # print("total legal plays: ", legal_plays.__len__())
         return legal_plays
+
+    def get_one_legal_play(self):
+        """
+        :return: get a single legal move fot the MTCSNode to expand
+        """
+        row_list, col_list = np.where(self.board == self.now_move)
+        space_row_list, space_col_list = np.where(self.board != self.now_move)
+        for row, col in zip(row_list, col_list):
+            for e_row, e_col in zip(space_row_list, space_col_list):
+                move = [(row, col), (e_row, e_col)]
+                if self.is_move_legal(move):
+                    return move
 
     def get_result(self):
         """
