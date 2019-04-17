@@ -12,6 +12,11 @@ from GlobalVar import *
 #  evaluation time: ~0.0003s(?), legal plays: ~40, total: ~0.01s
 #  roll out time: 40 * (0.003 + 0.01) = ~0.5s
 
+# TODO 优化get_legal_plays
+
+# TODO 优化evaluate，如果没吃棋，对方的棋子的分数（应该）不会变。
+#  另外，不用每次重新计算（质心位置、……），因为不同子节点之间，只有一个棋子有不同
+
 RollOutMode = Enum('RollOutMode', 'Random Evaluation')
 roll_out_mode = RollOutMode.Evaluation
 depths = []
