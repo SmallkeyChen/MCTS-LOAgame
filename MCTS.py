@@ -133,4 +133,4 @@ class MCTS:
             print(child.value, "/", child.visits)
         print("---------------------------\n")
 
-        return root.best_child()
+        return root.best_child(0)

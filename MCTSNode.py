@@ -34,13 +34,13 @@ class MCTSNode:
         if self.parent:
             self.parent.backup(result)
 
-    def best_child(self):
+    def best_child(self, c=1.414):
 
         weights = []
         for i in self.children:
             if self.state.now_move == -1:
                 i.value = -i.value
-            w = (i.value / i.visits + 1.414 * np.sqrt((2 * np.log(self.visits)) / i.visits))
+            w = (i.value / i.visits + c * np.sqrt((2 * np.log(self.visits)) / i.visits))
             weights.append(w)
 
         return self.children[np.argmax(weights)]
