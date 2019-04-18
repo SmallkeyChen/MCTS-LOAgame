@@ -39,18 +39,17 @@ class Efunction:
         return evalue
 
     @staticmethod
-    def massc(state):
+    def quick_val(state, actions):
+        action_scores = []
         xlist, ylist = np.where(state.board == state.now_move)
         num = np.sum(state.board == state.now_move)
         cx = np.sum(xlist) / num
         cy = np.sum(ylist) / num
-        return [cx, cy]
-
-    @staticmethod
-    def quick_val(center,action):
-        val1 = abs(action[0][0]-center[0]) + abs(action[0][1]-center[1])
-        val2 = abs(action[1][0]-center[0]) + abs(action[1][1]-center[1])
-        return val2 - val1
+        for action in actions:
+            val1 = abs(action[0][0]-cx) + abs(action[0][1]-cy)
+            val2 = abs(action[1][0]-cx) + abs(action[1][1]-cy)
+            action_scores.append(val1-val2)
+        return action_scores
 
     @staticmethod
     def evaluate_action_0(state, actions):

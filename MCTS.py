@@ -63,10 +63,12 @@ class MCTS:
 
                 if depth < 300:
                     if depth % depth_step == 0:
+                        # action_scores = e_fun.quick_val(tmp_state, actions)
                         action_scores = e_fun.evaluate_action(tmp_state, actions)
                         action = actions[np.argmax(action_scores)]
                     else:
                         random.shuffle(actions)
+                        # action_scores = e_fun.quick_val(tmp_state, actions[0:int(actions.__len__() / chosen)])
                         action_scores = e_fun.evaluate_action(tmp_state, actions[0:int(actions.__len__() / chosen)])
                         action = actions[np.argmax(action_scores)]
                 else:
