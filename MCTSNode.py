@@ -1,6 +1,6 @@
 import random
 import numpy as np
-
+from Efunction import Efunction
 
 class MCTSNode:
     def __init__(self, state, parent=None):
@@ -13,6 +13,7 @@ class MCTSNode:
         actions = self.state.get_legal_plays()
         random.shuffle(actions)
         self.untried_actions = actions
+        self.pruning()
 
     def is_terminal(self):
         return self.state.is_over()
@@ -34,13 +35,33 @@ class MCTSNode:
         if self.parent:
             self.parent.backup(result)
 
-    def best_child(self):
-
+    def best_child(self, c=1.414):
         weights = []
         for i in self.children:
             if self.state.now_move == -1:
                 i.value = -i.value
-            w = (i.value / i.visits + 1.414 * np.sqrt((2 * np.log(self.visits)) / i.visits))
+            w = (i.value / i.visits + c * np.sqrt((2 * np.log(self.visits)) / i.visits))
             weights.append(w)
 
         return self.children[np.argmax(weights)]
+
+    def pruning(self):
+        efun = Efunction()
+        evalues = []
+        for action in self.untried_actions:
+            tmp_state = self.state
+            tmp_state = tmp_state.state_move(action)
+            evalue = efun.evaluate_state(tmp_state)
+            evalue = -evalue
+            evalues.append(evalue)
+        untried = self.untried_actions
+        actions = []
+        while untried:
+            action = untried.pop()
+            actions.append(action)
+            evalues.pop()
+            if untried:
+                remove = np.argmin(evalues)
+                del untried[remove]
+                del evalues[remove]
+        self.untried_actions = actions

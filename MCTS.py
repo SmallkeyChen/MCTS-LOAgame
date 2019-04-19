@@ -63,11 +63,13 @@ class MCTS:
 
                 if depth < 300:
                     if depth % depth_step == 0:
+                        # action_scores = e_fun.quick_val(tmp_state, actions)
                         action_scores = e_fun.evaluate_action(tmp_state, actions)
                         action = actions[np.argmax(action_scores)]
                     else:
                         random.shuffle(actions)
                         # TODO if actions is empty?
+                        # action_scores = e_fun.quick_val(tmp_state, actions[0:int(actions.__len__() / chosen)])
                         action_scores = e_fun.evaluate_action(tmp_state, actions[0:max(int(actions.__len__() / chosen), 1)])
                         action = actions[np.argmax(action_scores)]
                 else:
@@ -134,4 +136,4 @@ class MCTS:
             print(child.value, "/", child.visits)
         print("---------------------------\n")
 
-        return root.best_child()
+        return root.best_child(0)

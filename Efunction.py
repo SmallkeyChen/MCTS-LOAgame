@@ -39,6 +39,19 @@ class Efunction:
         return evalue
 
     @staticmethod
+    def quick_val(state, actions):
+        action_scores = []
+        xlist, ylist = np.where(state.board == state.now_move)
+        num = np.sum(state.board == state.now_move)
+        cx = np.sum(xlist) / num
+        cy = np.sum(ylist) / num
+        for action in actions:
+            val1 = abs(action[0][0]-cx) + abs(action[0][1]-cy)
+            val2 = abs(action[1][0]-cx) + abs(action[1][1]-cy)
+            action_scores.append(val1-val2)
+        return action_scores
+
+    @staticmethod
     def evaluate_action_0(state, actions):
         """
         评估每一步的分数，分为CONCENTRATION，CENTRALIZATION，CONNECTEDNESS，每项的分数区间[-1/3，1/3]，总分区间[-1，1]
@@ -318,6 +331,7 @@ class Efunction:
         # print("connect:", score)
         return score
         # def quads(self,board,color):
+
 
 
 if __name__ == "__main__":
