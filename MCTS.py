@@ -5,7 +5,7 @@ import numpy as np
 from GlobalVar import *
 
 
-# TODO use evaluation functions in every step
+# when using evaluation functions in every step
 # depth: ~40
 # get_legal_play time: ~0.003s
 # evaluation time: ~0.0003s(?), legal plays: ~40, total: ~0.01s
@@ -13,13 +13,11 @@ from GlobalVar import *
 
 # TODO 优化get_legal_plays
 
-# TODO 优化evaluate，如果没吃棋，对方的棋子的分数（应该）不会变。
-#  另外，不用每次重新计算（质心位置、……），因为不同子节点之间，只有一个棋子有不同
-
 depths = []
 time_get_legal_plays = []
 time_evaluation = []
 count_legal_plays = []
+
 
 class MCTS:
     @staticmethod
@@ -40,20 +38,21 @@ class MCTS:
 
         while not tmp_state.is_over():
             depth = depth + 1
-
-            # evaluate current value
             e_fun = Efunction()
-            e_value = e_fun.evaluate_state(tmp_state)
 
             # when too deep, return evaluation value directly
             if depth > depth_threshold:
+                # evaluate current value
+                e_value = e_fun.evaluate_state(tmp_state)
                 return e_value
 
             # choose an action to take
             time1 = time.time()
             actions = tmp_state.get_legal_plays()
+            # print("actions: ", actions)
             time2 = time.time()
             time_get_legal_plays.append(time2 - time1)
+            # print("actions count: ", actions.__len__())
             count_legal_plays.append(actions.__len__())
             # print("get legal play time: ", time2 - time1)
 
@@ -61,30 +60,16 @@ class MCTS:
                 action_scores = []
                 time1 = time.time()
 
-                if depth < 300:
-                    if depth % depth_step == 0:
-                        # action_scores = e_fun.quick_val(tmp_state, actions)
-                        action_scores = e_fun.evaluate_action(tmp_state, actions)
-                        action = actions[np.argmax(action_scores)]
-                    else:
-                        random.shuffle(actions)
-                        # TODO if actions is empty?
-                        # action_scores = e_fun.quick_val(tmp_state, actions[0:int(actions.__len__() / chosen)])
-                        action_scores = e_fun.evaluate_action(tmp_state, actions[0:max(int(actions.__len__() / chosen), 1)])
-                        action = actions[np.argmax(action_scores)]
+                if depth % depth_step == 0:
+                    # action_scores = e_fun.quick_val(tmp_state, actions)
+                    action_scores = e_fun.evaluate_action(tmp_state, actions)
+                    action = actions[np.argmax(action_scores)]
                 else:
-                    if depth % depth_step == 0:
-                        for act in actions:
-                            next_state = tmp_state.state_move(act)
-                            action_scores.append(e_fun.evaluate_state(next_state))
-                        action = actions[np.argmin(action_scores)]
-                    else:
-                        random.shuffle(actions)
-                        for i in range(max(int(actions.__len__() / chosen), 1)):
-                            act = actions[i]
-                            next_state = tmp_state.state_move(act)
-                            action_scores.append(e_fun.evaluate_state(next_state))
-                        action = actions[np.argmin(action_scores)]
+                    random.shuffle(actions)
+                    # TODO if actions is empty?
+                    # action_scores = e_fun.quick_val(tmp_state, actions[0:int(actions.__len__() / chosen)])
+                    action_scores = e_fun.evaluate_action(tmp_state, actions[0:max(int(actions.__len__() / chosen), 1)])
+                    action = actions[np.argmax(action_scores)]
 
                 time2 = time.time()
                 time_evaluation.append(time2 - time1)

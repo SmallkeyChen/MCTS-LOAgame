@@ -1,10 +1,7 @@
 from LOAState import LOAState
 import numpy as np
 from GlobalVar import *
-import unittest
 
-
-# TODO 把三个估值计算合起来，不用循环三次
 
 def move_is_capture(board, move):
     return board[move[0][0]][move[0][1]] == -board[move[1][0]][move[1][1]]
@@ -186,7 +183,8 @@ class Efunction:
             move = actions[i]
             start_coord, end_coord, total_dist_after = move[0], move[1], 0
             connect_before, connect_after = 0, 0
-            actions_scores.append(0)
+            score = 0
+            # actions_scores.append(0)
 
             # 1. find center coord after each move
             cx_after = cx_before + (end_coord[0] - start_coord[0]) / num
@@ -199,13 +197,13 @@ class Efunction:
             # average_dist_after = total_dist_after / num
 
             # 3. **CONCENTRATION**: -delta(total_distance) * 1/6 * 1/6 (cause max delta = 6?)
-            actions_scores[i] = actions_scores[i] + (total_dist_before - total_dist_after) * 1/6 * 1/3
-            # print("------\n concentration: %.2f" % actions_scores[i])
+            score = score + (total_dist_before - total_dist_after) * 1/6 * 1/3
+            # print("------\n concentration: %.2f" % score)
 
             # 4. **CENTRALIZATION**: delta(distance_to_board_center) * 1/6 * 1/2 (cause max delta = 6)
             dist_before = abs(start_coord[0] - 3.5) + abs(start_coord[1] - 3.5)
             dist_after = abs(end_coord[0] - 3.5) + abs(end_coord[1] - 3.5)
-            actions_scores[i] = actions_scores[i] + (dist_before - dist_after) * 1/6 * 1/3
+            score = score + (dist_before - dist_after) * 1/6 * 1/3
             # print(" centralization: %.2f" % ((dist_before - dist_after) * 1/6 * 1/3))
 
             # 5. **CONNECTEDNESS**: delta(connected_pieces) * 1/8 * 1/3 (cause max delta = 8)
@@ -217,14 +215,17 @@ class Efunction:
                     connect_before = connect_before + (state.board[start_neigh[0]][start_neigh[1]] == state.now_move)
                 if 0 <= end_neigh[0] <= 7 and 0 <= end_neigh[1] <= 7:
                     connect_after = connect_after + (state.board[end_neigh[0]][end_neigh[1]] == state.now_move)
-            actions_scores[i] = actions_scores[i] + (connect_after - connect_before) * 1/8 * 1/3
+            score = score + (connect_after - connect_before) * 1/8 * 1/3
             # print(" connectedness: %.2f" % ((connect_after - connect_before) * 1/8 * 1/3))
 
             # 6. if move is capturing: calculate bonus score based on opponent's pieces
             if state.board[end_coord] == -state.now_move:
 
-                # 6.1. **CENTRALIZATION**: (area: [-1/6, 1/6])
-                actions_scores[i] = actions_scores[i] - (abs(end_coord[0] - 3.5) + abs(end_coord[1] - 3.5) - 4) * 1/3 * 1/6
+                # 6.0. **ATTACK**: capture bonus
+                score = score + 0.2
+
+                # 6.1. **CENTRALIZATION**: (area: [-1/3, 1/3])
+                score = score - (abs(end_coord[0] - 3.5) + abs(end_coord[1] - 3.5) - 4) * 1/3 * 1/3
                 # print(" oppo central: %.2f" % -((abs(end_coord[0] - 3.5) + abs(end_coord[1] - 3.5) - 4) * 1/3 * 1/6))
 
                 # 6.2. **CONNECTEDNESS**: delta(opponent_connectedness) * 1/7 * 1/3 (area: [0, 1/3])
@@ -233,10 +234,29 @@ class Efunction:
                     opponent_end_neigh = (end_coord[0] + m[0], end_coord[1] + m[1])
                     if 0 <= opponent_end_neigh[0] <= 7 and 0 <= opponent_end_neigh[1] <= 7:
                         opponent_connect = opponent_connect + (state.board[opponent_end_neigh[0]][opponent_end_neigh[1]] == -state.now_move)
-                actions_scores[i] = actions_scores[i] + opponent_connect * 1/7 * 1/3
+                score = score + opponent_connect * 1/7 * 1/3
                 # print(" oppo connect: %.2f" % (opponent_connect * 1/7 * 1/3))
 
-            actions_scores[i] = clamp(actions_scores[i], -1, 1)
+                # region TODO un-capture-able
+                # 6.3. **UN-CAPTURE-ABLE**:
+                # danger_area = []
+                # # row
+                # row_pieces = np.sum(abs(state.board[end_coord[0]][0:7]))
+                # if end_coord[1] + row_pieces <= 7:
+                #     danger_area.append((end_coord[0], end_coord[1] + row_pieces))
+                # if end_coord[1] - row_pieces >= 0:
+                #     danger_area.append((end_coord[0], end_coord[1] - row_pieces))
+                # # column
+                # column_pieces = np.sum(abs(state.board[0:7][end_coord[1]]))
+                # if end_coord[0] + column_pieces <= 7:
+                #     danger_area.append((end_coord[0] + column_pieces, end_coord[1]))
+                # if end_coord[0] - column_pieces >= 0:
+                #     danger_area.append((end_coord[0] - column_pieces, end_coord[1]))
+                # # cross
+                # endregion
+
+            score = clamp(score, -1, 1)
+            actions_scores.append(score)
             # print("action score: %.3f" % actions_scores[i])
 
         # endregion
@@ -267,7 +287,6 @@ class Efunction:
 
         return score
 
-    # TODO improve this
     @staticmethod
     def centralisation(board, color):
         """

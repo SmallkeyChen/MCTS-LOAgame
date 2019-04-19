@@ -2,6 +2,7 @@ import random
 import numpy as np
 from Efunction import Efunction
 
+
 class MCTSNode:
     def __init__(self, state, parent=None):
         self.value = 0.0
@@ -46,22 +47,23 @@ class MCTSNode:
         return self.children[np.argmax(weights)]
 
     def pruning(self):
-        efun = Efunction()
-        evalues = []
+        e_fun = Efunction()
+        e_values = []
+
         for action in self.untried_actions:
             tmp_state = self.state
             tmp_state = tmp_state.state_move(action)
-            evalue = efun.evaluate_state(tmp_state)
-            evalue = -evalue
-            evalues.append(evalue)
+            e_value = e_fun.evaluate_state(tmp_state)
+            e_value = -e_value
+            e_values.append(e_value)
         untried = self.untried_actions
         actions = []
         while untried:
             action = untried.pop()
             actions.append(action)
-            evalues.pop()
+            e_values.pop()
             if untried:
-                remove = np.argmin(evalues)
+                remove = np.argmin(e_values)
                 del untried[remove]
-                del evalues[remove]
+                del e_values[remove]
         self.untried_actions = actions

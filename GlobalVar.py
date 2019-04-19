@@ -1,11 +1,11 @@
 from enum import Enum
 
 
-total_counts = 200      # counts of exploration
+total_counts = 100      # counts of exploration
 
 
 # when depth % depth_step == 0, evaluate all legal plays; else evaluate 1/chosen legal plays
-depth_step = 4
+depth_step = 5
 chosen = 3
 
 depth_threshold = 1000        # when depth > depth_threshold, return evaluation score directly
