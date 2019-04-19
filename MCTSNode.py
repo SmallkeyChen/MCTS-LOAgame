@@ -58,12 +58,16 @@ class MCTSNode:
             e_values.append(e_value)
         untried = self.untried_actions
         actions = []
+        # actions_scores = e_fun.evaluate_action(self.state, untried)
         while untried:
             action = untried.pop()
             actions.append(action)
+            # actions_scores.pop()
             e_values.pop()
             if untried:
                 remove = np.argmin(e_values)
+                # remove = np.argmin(actions_scores)
                 del untried[remove]
                 del e_values[remove]
+                # del actions_scores[remove]
         self.untried_actions = actions

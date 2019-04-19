@@ -197,13 +197,13 @@ class Efunction:
             # average_dist_after = total_dist_after / num
 
             # 3. **CONCENTRATION**: -delta(total_distance) * 1/6 * 1/6 (cause max delta = 6?)
-            score = score + (total_dist_before - total_dist_after) * 1/6 * 1/3
+            score = score + (total_dist_before - total_dist_after) * 1/6 * coef_concen
             # print("------\n concentration: %.2f" % score)
 
             # 4. **CENTRALIZATION**: delta(distance_to_board_center) * 1/6 * 1/2 (cause max delta = 6)
             dist_before = abs(start_coord[0] - 3.5) + abs(start_coord[1] - 3.5)
             dist_after = abs(end_coord[0] - 3.5) + abs(end_coord[1] - 3.5)
-            score = score + (dist_before - dist_after) * 1/6 * 1/3
+            score = score + (dist_before - dist_after) * 1/6 * coef_central
             # print(" centralization: %.2f" % ((dist_before - dist_after) * 1/6 * 1/3))
 
             # 5. **CONNECTEDNESS**: delta(connected_pieces) * 1/8 * 1/3 (cause max delta = 8)
@@ -215,14 +215,14 @@ class Efunction:
                     connect_before = connect_before + (state.board[start_neigh[0]][start_neigh[1]] == state.now_move)
                 if 0 <= end_neigh[0] <= 7 and 0 <= end_neigh[1] <= 7:
                     connect_after = connect_after + (state.board[end_neigh[0]][end_neigh[1]] == state.now_move)
-            score = score + (connect_after - connect_before) * 1/8 * 1/3
+            score = score + (connect_after - connect_before) * 1/8 * coef_connect
             # print(" connectedness: %.2f" % ((connect_after - connect_before) * 1/8 * 1/3))
 
             # 6. if move is capturing: calculate bonus score based on opponent's pieces
             if state.board[end_coord] == -state.now_move:
 
                 # 6.0. **ATTACK**: capture bonus
-                score = score + 0.2
+                # score = score + 0.1
 
                 # 6.1. **CENTRALIZATION**: (area: [-1/3, 1/3])
                 score = score - (abs(end_coord[0] - 3.5) + abs(end_coord[1] - 3.5) - 4) * 1/3 * 1/3

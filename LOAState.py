@@ -152,7 +152,8 @@ class LOAState:
         legal_plays = []
 
         # region get all information about pieces counts in the board
-        adverse = -1 if self.now_move == 1 else 1
+        me = self.now_move
+        adverse = -me
         row_pieces = np.sum(abs(self.board), axis=1)
         column_pieces = np.sum(abs(self.board), axis=0)
         left_cross_pieces = get_cross_pieces_list(self.board, direction='left')
@@ -170,52 +171,67 @@ class LOAState:
             # region 1. to left
             if start_col >= column_step:
                 end_row, end_col = start_row, start_col - column_step
-                if column_step == 1:
-                    legal_plays.append(((start_row, start_col), (end_row, end_col)))
-                elif column_step > 1:
-                    between = self.board[start_row, end_col + 1: start_col]
-                    if not np.any(between == adverse):
+                if self.board[end_row, end_col] != me:
+                    if column_step == 1:
                         legal_plays.append(((start_row, start_col), (end_row, end_col)))
+                    elif column_step > 1:
+                        between = self.board[start_row, end_col + 1: start_col]
+                        if not np.any(between == adverse):
+                            legal_plays.append(((start_row, start_col), (end_row, end_col)))
             # endregion
 
             # region 2. to right
             if start_col + column_step <= 7:
                 end_row, end_col = start_row, start_col + column_step
-                if column_step == 1:
-                    legal_plays.append(((start_row, start_col), (end_row, end_col)))
-                elif column_step > 1:
-                    between = self.board[start_row, start_col + 1: end_col]
-                    if not np.any(between == adverse):
+                if self.board[end_row, end_col] != me:
+                    if column_step == 1:
                         legal_plays.append(((start_row, start_col), (end_row, end_col)))
+                    elif column_step > 1:
+                        between = self.board[start_row, start_col + 1: end_col]
+                        if not np.any(between == adverse):
+                            legal_plays.append(((start_row, start_col), (end_row, end_col)))
             # endregion
 
             # region 3. to up
             if start_row + row_step <= 7:
                 end_row, end_col = start_row + row_step, start_col
-                if row_step == 1:
-                    legal_plays.append(((start_row, start_col), (end_row, end_col)))
-                elif row_step > 1:
-                    between = self.board[start_row + 1: end_row, start_col]
-                    if not np.any(between == adverse):
+                if self.board[end_row, end_col] != me:
+                    if row_step == 1:
                         legal_plays.append(((start_row, start_col), (end_row, end_col)))
+                    elif row_step > 1:
+                        between = self.board[start_row + 1: end_row, start_col]
+                        if not np.any(between == adverse):
+                            legal_plays.append(((start_row, start_col), (end_row, end_col)))
             # endregion
 
             # region 4. to down
             if start_row >= row_step:
                 end_row, end_col = start_row - row_step, start_col
-                if row_step == 1:
-                    legal_plays.append(((start_row, start_col), (end_row, end_col)))
-                elif row_step > 1:
-                    between = self.board[end_row + 1: start_row, start_col]
-                    if not np.any(between == adverse):
+                if self.board[end_row, end_col] != me:
+                    if row_step == 1:
                         legal_plays.append(((start_row, start_col), (end_row, end_col)))
+                    elif row_step > 1:
+                        between = self.board[end_row + 1: start_row, start_col]
+                        if not np.any(between == adverse):
+                            legal_plays.append(((start_row, start_col), (end_row, end_col)))
             # endregion
 
             # region 5. crosses: left up, right down, right up, left down
             flag_lu = start_row + left_cross_step <= 7 and start_col - left_cross_step >= 0
+            if flag_lu:
+                flag_lu = self.board[start_row + left_cross_step][start_col - left_cross_step] != me
+
             flag_rd = start_row - left_cross_step >= 0 and start_col + left_cross_step <= 7
+            if flag_rd:
+                flag_rd = self.board[start_row - left_cross_step][start_col + left_cross_step] != me
+
             flag_ru = start_row + right_cross_step <= 7 and start_col + right_cross_step <= 7
+            if flag_ru:
+                flag_ru = self.board[start_row + right_cross_step][start_col + right_cross_step] != me
+
             flag_ld = start_row - right_cross_step >= 0 and start_col - right_cross_step >= 0
+            if flag_ld:
+                flag_ld = self.board[start_row - right_cross_step][start_col - right_cross_step] != me
 
             for i in range(left_cross_step - 1):
                 if flag_lu:
