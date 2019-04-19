@@ -161,7 +161,8 @@ class Efunction:
 
         # 2. calculate average distance before move
         for n in n_list:
-            total_dist_before = total_dist_before + pow(n[0] - cx_before, 2) + pow(n[1] - cy_before, 2)
+            total_dist_before = total_dist_before + n[0] - cx_before + n[1] - cy_before
+            # total_dist_before = total_dist_before + pow(n[0] - cx_before, 2) + pow(n[1] - cy_before, 2)
         average_dist_before = total_dist_before / num
 
         # endregion
@@ -180,8 +181,8 @@ class Efunction:
 
             # 2. calculate average distance after move
             for n in n_list:
-                total_dist_after = total_dist_after + pow(n[0] - cx_after, 2) + pow(n[1] - cy_after, 2)
-                # total_dist_after = total_dist_after +
+                total_dist_after = total_dist_after + n[0] - cx_after + n[1] - cy_after
+                # total_dist_after = total_dist_after + pow(n[0] - cx_after, 2) + pow(n[1] - cy_after, 2)
             # average_dist_after = total_dist_after / num
 
             # 3. **CONCENTRATION**: -delta(total_distance) * 1/6 * 1/6 (cause max delta = 6?)

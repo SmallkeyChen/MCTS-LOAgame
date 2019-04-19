@@ -67,7 +67,8 @@ class MCTS:
                         action = actions[np.argmax(action_scores)]
                     else:
                         random.shuffle(actions)
-                        action_scores = e_fun.evaluate_action(tmp_state, actions[0:int(actions.__len__() / chosen)])
+                        # TODO if actions is empty?
+                        action_scores = e_fun.evaluate_action(tmp_state, actions[0:max(int(actions.__len__() / chosen), 1)])
                         action = actions[np.argmax(action_scores)]
                 else:
                     if depth % depth_step == 0:
