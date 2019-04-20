@@ -312,7 +312,6 @@ class LOAState:
         """
         tmp = LOAState.get_start(board, color)
         board = (board == color).astype(int)
-        np.sum(board == color).astype(int)
         color_nums = np.sum(board)
         moves = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
         openlist = [tmp]

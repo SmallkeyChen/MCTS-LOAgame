@@ -82,7 +82,8 @@ class MCTS:
             tmp_state = tmp_state.state_move(action)
 
         result = tmp_state.get_result()
-        print("depth :", depth, " | result: ", result)
+        if PrintStatistics:
+            print("depth :", depth, " | result: ", result)
         depths.append(depth)
         return result
 
@@ -103,21 +104,23 @@ class MCTS:
             reward = MCTS.roll_out(node)
             time_2 = time.time()
 
-            print("--- roll-out time: ", time_2 - time_1, " ---")
+            if PrintStatistics:
+                print("--- roll-out time: ", time_2 - time_1, " ---")
 
             node.backup(reward)
 
         time_end = time.time()
 
-        print("\ntotal time: {0:.3f}".format(time_end - time_start))
-        print("average roll-out time: {0:.3f}".format((time_end - time_start) / total_counts))
-        print("average depth: {0:.3f}".format(np.mean(depths)))
-        print("average number of legal plays: {0:.1f}".format(np.mean(count_legal_plays)))
-        print("average get_legal_play time: {0:.5f} --- {1:.2f}%".format(np.mean(time_get_legal_plays), np.mean(time_get_legal_plays) / (time_end - time_start) * np.mean(depths) * total_counts * 100))
-        print("average evaluation time: {0:.5f} --- {1:.2f}%".format(np.mean(time_evaluation), np.mean(time_evaluation) / (time_end - time_start) * np.mean(depths) * total_counts * 100))
-        print("----- children scores -----")
-        for child in root.children:
-            print(child.value, "/", child.visits)
-        print("---------------------------\n")
+        if PrintStatistics:
+            print("\ntotal time: {0:.3f}".format(time_end - time_start))
+            print("average roll-out time: {0:.3f}".format((time_end - time_start) / total_counts))
+            print("average depth: {0:.3f}".format(np.mean(depths)))
+            print("average number of legal plays: {0:.1f}".format(np.mean(count_legal_plays)))
+            print("average get_legal_play time: {0:.5f} --- {1:.2f}%".format(np.mean(time_get_legal_plays), np.mean(time_get_legal_plays) / (time_end - time_start) * np.mean(depths) * total_counts * 100))
+            print("average evaluation time: {0:.5f} --- {1:.2f}%".format(np.mean(time_evaluation), np.mean(time_evaluation) / (time_end - time_start) * np.mean(depths) * total_counts * 100))
+            print("----- children scores -----")
+            for child in root.children:
+                print(child.value, "/", child.visits)
+            print("---------------------------\n")
 
         return root.best_child(0)

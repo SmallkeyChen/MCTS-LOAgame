@@ -1,7 +1,8 @@
 from enum import Enum
 
+PrintStatistics = False
 
-total_counts = 300      # counts of exploration
+total_counts = 100      # counts of exploration
 
 
 # when depth % depth_step == 0, evaluate all legal plays; else evaluate 1/chosen legal plays
