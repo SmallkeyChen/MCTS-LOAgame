@@ -11,7 +11,6 @@ from GlobalVar import *
 # evaluation time: ~0.0003s(?), legal plays: ~40, total: ~0.01s
 # roll out time: 40 * (0.003 + 0.01) = ~0.5s
 
-# TODO 优化get_legal_plays
 
 depths = []
 time_get_legal_plays = []
