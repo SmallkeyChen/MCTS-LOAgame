@@ -301,6 +301,8 @@ if __name__ == "__main__":
     initial_board[[0, 7], 1:7] = 1
     initial_board[1:7, [0, 7]] = -1
     mode = 1
+    cjl =1
+    kk = 3
     now_move = 1
     state = LOAState(initial_board, 1)
     count = 60.0
@@ -311,8 +313,6 @@ if __name__ == "__main__":
     draw_chessboard(initial_board)
     draw_countdown(count)
     draw_time(0, 0, 1)
-    print("cjlnb!")
-    print("cjlnb!")
     print("cjlnb!")
     print("cjlnb!")
     print("cjlnb!")
