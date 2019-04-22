@@ -303,17 +303,19 @@ if __name__ == "__main__":
     mode = 1
     now_move = 1
     state = LOAState(initial_board, 1)
-    # 默认mode=1，电脑（黑）先下
     count = 60.0
-    # 倒计时时间60s
     computer1_moved = False
     computer2_moved = False
     has_chess = None
     game_terminal = None
-
     draw_chessboard(initial_board)
     draw_countdown(count)
     draw_time(0, 0, 1)
+    print("cjlnb!")
+    print("cjlnb!")
+    print("cjlnb!")
+    print("cjlnb!")
+    print("cjlnb!")
 
     while True:
         for event in pygame.event.get():
